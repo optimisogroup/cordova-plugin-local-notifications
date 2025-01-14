@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Random;
 
 import de.appplant.cordova.plugin.notification.action.Action;
+import de.appplant.cordova.plugin.notification.util.LaunchUtils;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static de.appplant.cordova.plugin.notification.Notification.EXTRA_UPDATE;
@@ -58,9 +59,6 @@ public final class Builder {
 
     // Notification options passed by JS
     private final Options options;
-
-    // To generate unique request codes
-    private final Random random = new Random();
 
     // Receiver to handle the clear event
     private Class<?> clearReceiver;
@@ -201,10 +199,8 @@ public final class Builder {
             .getLaunchIntentForPackage(pkgName)
             .putExtra("launchNotificationId", options.getId());
 
-        int reqCode = random.nextInt();
-        // request code and flags not added for demo purposes
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, reqCode, intent, FLAG_UPDATE_CURRENT);
-
+        PendingIntent pendingIntent = LaunchUtils.getActivityPendingIntent(context, intent);
+        
         builder.setFullScreenIntent(pendingIntent, true);
     }
 
@@ -396,11 +392,7 @@ public final class Builder {
             intent.putExtras(extras);
         }
 
-        int reqCode = random.nextInt();
-
-        PendingIntent deleteIntent = PendingIntent.getBroadcast(
-                context, reqCode, intent, FLAG_UPDATE_CURRENT);
-
+        PendingIntent deleteIntent = LaunchUtils.getBroadcastPendingIntent(context, intent);
         builder.setDeleteIntent(deleteIntent);
     }
 
@@ -425,11 +417,7 @@ public final class Builder {
             intent.putExtras(extras);
         }
 
-        int reqCode = random.nextInt();
-
-        PendingIntent contentIntent = PendingIntent.getService(
-                context, reqCode, intent, FLAG_UPDATE_CURRENT);
-
+        PendingIntent contentIntent = LaunchUtils.getTaskStackPendingIntent(context, intent);
         builder.setContentIntent(contentIntent);
     }
 
@@ -475,10 +463,7 @@ public final class Builder {
             intent.putExtras(extras);
         }
 
-        int reqCode = random.nextInt();
-
-        return PendingIntent.getService(
-                context, reqCode, intent, FLAG_UPDATE_CURRENT);
+        return LaunchUtils.getTaskStackPendingIntent(context, intent);
     }
 
     /**
