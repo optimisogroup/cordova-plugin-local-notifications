@@ -20,12 +20,18 @@ public final class LaunchUtils {
     }
 
     private static int getIntentFlags() {
-         int FLAG_MUTABLE = 33554432; // don't use pendingIntent.FLAG_MUTABLE, use numeric value instead to be able to compile api < 31
-         int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-         if (android.os.Build.VERSION.SDK_INT >= 31) {
-           flags |= FLAG_MUTABLE;
-         }
-         return flags;
+        int FLAG_MUTABLE = 33554432; // don't use pendingIntent.FLAG_MUTABLE, use numeric value instead to be able to compile api < 31
+        int FLAG_IMMUTABLE = 67108864;
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+
+        if (android.os.Build.VERSION.SDK_INT >= 34) {
+            flags |= FLAG_IMMUTABLE;
+        }
+        else if (android.os.Build.VERSION.SDK_INT >= 31) {
+            flags |= FLAG_MUTABLE;
+        }
+         
+        return flags;
      }
 
      public static PendingIntent getServicePendingIntent(Context context, Intent intent) {
@@ -33,17 +39,17 @@ public final class LaunchUtils {
      }
 
      public static PendingIntent getBroadcastPendingIntent(Context context, Intent intent) {
-         return  PendingIntent.getBroadcast(context, getRandomCode(), intent, getIntentFlags());
+        return  PendingIntent.getBroadcast(context, getRandomCode(), intent, getIntentFlags());
      }
 
      public static PendingIntent getActivityPendingIntent(Context context, Intent intent) {
-         return  PendingIntent.getActivity(context, getRandomCode(), intent, getIntentFlags());
+        return  PendingIntent.getActivity(context, getRandomCode(), intent, getIntentFlags());
      }
 
      public static  PendingIntent getTaskStackPendingIntent(Context context, Intent intent) {
-         TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
-         taskStackBuilder.addNextIntentWithParentStack(intent);
-         return taskStackBuilder.getPendingIntent(getRandomCode(), getIntentFlags());
+        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
+        taskStackBuilder.addNextIntentWithParentStack(intent);
+        return taskStackBuilder.getPendingIntent(getRandomCode(), getIntentFlags());
      }
 
     /***

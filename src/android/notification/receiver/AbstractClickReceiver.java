@@ -52,7 +52,6 @@ abstract public class AbstractClickReceiver extends NotificationTrampolineActivi
     /**
      * Called when local notification was clicked to launch the main intent.
      */
-    @Override
     protected void onHandleIntent(Intent intent) {
         if (intent == null)
             return;
